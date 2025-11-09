@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turbo Mines 1Win Reproduction</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    /* 1. BACKGROUND */
+    body {
+        background: url('https://cdn.gx-games-54rg78cw-aitralt6.com/fg-cdn/prd/root/images/turboMines_onewin_axis/mobile/bg.webp') center/cover no-repeat;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        padding: 10px;
+    }
+
+    /* 2. TOP LOGO */
+    .logo-container {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .top-logo {
+        width: 300px; /* Taille augmentée x2 */
+        height: auto;
+    }
+
+    /* 3. GRILLE DE JEU */
+    .board {
+        display: grid;
+        grid-template-columns: repeat(5, 60px); 
+        grid-gap: 8px; 
+        padding: 0;
+        position: relative;
+    }
+
+    @media (max-width: 500px) {
+        .board {
+            grid-template-columns: repeat(5, 55px);
+            grid-gap: 6px;
+        }
+    }
+
+    /* 4. STYLE DE LA CARTE CACHÉE (FACE ARRIÈRE) */
+    .cell {
+        width: 60px;
+        height: 60px;
+        border-radius: 10px;
+        /* Carte inactive par URL */
+        background: url('https://cdn.gx-games-54rg78cw-aitralt6.com/fg-cdn/prd/root/images/turboMines/mobile/board/boardItemInactive.webp') center/cover no-repeat;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        
+        /* Configuration de la transition et 3D */
+        transform-style: preserve-3d;
+        transition: transform 0.5s;
+        position: relative;
+    }
+    
+    @media (max-width: 500px) {
+        .cell {
+            width: 55px;
+            height: 55px;
+        }
+    }
+
+    /* Conteneurs de face pour la rotation 3D */
+    .face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+    }
+    
+    .back-face {
+        transform: rotateY(0deg); 
+    }
+    
+    .back-face span {
+        display: none; 
+    }
+
+
+    /* 5. STYLE DE LA CARTE RETOURNÉE (FACE AVANT : ÉTOILE DORÉE) */
+    .front-face {
+        transform: rotateY(180deg); 
+        border-radius: 10px;
+        
+        /* Utilisation de l'image de l'étoile fournie */
+        background: url('https://i.ibb.co/NgYB9mwV/cadre-toile-removebg-preview.png') center/cover no-repeat;
+        background-size: cover; 
+    }
+    
+    .front-face span {
+        display: none;
+    }
+
+
+    /* État retourné avec rotation 3D */
+    .cell.flipped {
+        background: none; 
+        transform: rotateY(180deg);
+    }
+    
+    /* État initial sans rotation (pour reproduire "après.PNG") */
+    .cell.initial-flipped {
+        background: none; 
+        transform: none; 
+    }
+    
+    .cell.initial-flipped .front-face {
+        transform: rotateY(0deg); 
+    }
+
+    /* 6. CONTRÔLES */
+    .controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 25px;
+        gap: 10px;
+    }
+
+    .signal-btn, .reset-btn {
+        background: rgba(0, 0, 0, 0.6);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 10px 25px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s;
+        width: 160px;
+    }
+
+    .signal-btn:hover, .reset-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    select {
+        background: rgba(255,255,255,0.15);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
+        padding: 8px 12px;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        outline: none;
+    }
+
+    option {
+        color: black;
+    }
+</style>
+</head>
+<body>
+
+<div class="logo-container">
+    <img src="https://cdn.gx-games-54rg78cw-aitralt6.com/fg-cdn/prd/root/images/turboMines/mobile/asideLogo.webp" alt="Turbo Mines Logo" class="top-logo">
+</div>
+
+<div class="board" id="board"></div>
+
+<div class="controls">
+    <select id="mineSelect">
+        <option value="1">Mine: 1</option>
+        <option value="2">Mine: 2</option>
+        <option value="3" selected>Mine: 3</option>
+        <option value="4">Mine: 4</option>
+        <option value="5">Mine: 5</option>
+        <option value="6">Mine: 6</option>
+        <option value="7">Mine: 7</option>
+    </select>
+
+    <button class="signal-btn" id="signalBtn">Get Signal</button>
+    <button class="reset-btn" id="resetBtn">Reset</button>
+</div>
+
+<script>
+    const board = document.getElementById('board');
+    const signalBtn = document.getElementById('signalBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const mineSelect = document.getElementById('mineSelect');
+
+    function createCell(index) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+
+        // Face arrière
+        const backFace = document.createElement('div');
+        backFace.className = 'face back-face';
+        backFace.appendChild(document.createElement('span'));
+        cell.appendChild(backFace);
+
+        // Face avant (Étoile dorée)
+        const frontFace = document.createElement('div');
+        frontFace.className = 'face front-face';
+        frontFace.appendChild(document.createElement('span'));
+        cell.appendChild(frontFace);
+        
+        board.appendChild(cell);
+    }
+
+    // Créer 25 cellules (5x5 grid)
+    for (let i = 0; i < 25; i++) {
+        createCell(i);
+    }
+    
+    // Logique du jeu conservée (Mines)
+    const mineMap = {
+        1: 5,
+        2: 5,
+        3: 5, 
+        4: 4,
+        5: 3,
+        6: 2,
+        7: 2
+    };
+
+    function getZigzagIndexes(count) {
+        const allIndexes = [...Array(25).keys()].filter(i => ![0, 4, 20, 24].includes(i));
+        let zigzag = [];
+        for (let r = 0; r < 5; r++) {
+            let row = allIndexes.filter(i => Math.floor(i / 5) === r);
+            if (r % 2 !== 0) row.reverse();
+            zigzag = zigzag.concat(row);
+        }
+
+        const selected = [];
+        while (selected.length < count && zigzag.length > 0) {
+            const idx = Math.floor(Math.random() * zigzag.length);
+            selected.push(zigzag[idx]);
+            zigzag.splice(idx, 1);
+        }
+        return selected;
+    }
+
+
+    function resetBoard() {
+        document.querySelectorAll('.cell').forEach(cell => {
+            cell.classList.remove('flipped');
+            cell.classList.remove('initial-flipped'); 
+        });
+    }
+    
+    let isFirstSignal = true;
+
+    signalBtn.addEventListener('click', () => {
+        const cells = document.querySelectorAll('.cell');
+        
+        // 1. Réinitialiser
+        resetBoard(); 
+        
+        // 2. Logique pour reproduire l'image "après.PNG" au premier clic
+        if (isFirstSignal) {
+            // Index des deux étoiles dorées dans l'image "après.PNG" (Index 1 et 7)
+            const initialIndexes = [1, 7]; 
+
+            initialIndexes.forEach((i, idx) => {
+                 setTimeout(() => {
+                    cells[i].classList.add('initial-flipped'); 
+                 }, idx * 150);
+            });
+            
+            isFirstSignal = false;
+            return; 
+        }
+        
+        // 3. Logique de prédiction (pour les clics suivants)
+        const mineValue = parseInt(mineSelect.value);
+        const openCount = mineMap[mineValue];
+        const indexes = getZigzagIndexes(openCount);
+
+        indexes.forEach((i, idx) => {
+            setTimeout(() => {
+                cells[i].classList.add('flipped');
+            }, idx * 150);
+        });
+    });
+
+    resetBtn.addEventListener('click', () => {
+        resetBoard();
+        isFirstSignal = true;
+    });
+</script>
+
+</body>
+</html>
