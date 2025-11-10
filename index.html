@@ -29,10 +29,10 @@
         height: auto;
     }
 
-    /* 3. GRILLE DE JEU */
+    /* 3. GRILLE DE JEU (MODIFIÉ : Colonnes plus larges) */
     .board {
         display: grid;
-        grid-template-columns: repeat(5, 60px); 
+        grid-template-columns: repeat(5, 75px); /* MODIFIÉ : 75px pour la largeur de la case */
         grid-gap: 8px; 
         padding: 0;
         position: relative;
@@ -40,15 +40,15 @@
 
     @media (max-width: 500px) {
         .board {
-            grid-template-columns: repeat(5, 55px);
+            grid-template-columns: repeat(5, 65px); /* MODIFIÉ : 65px pour la largeur sur mobile */
             grid-gap: 6px;
         }
     }
 
-    /* 4. STYLE DE LA CARTE CACHÉE (FACE ARRIÈRE) */
+    /* 4. STYLE DE LA CARTE CACHÉE (FACE ARRIÈRE) (MODIFIÉ : Cellules rectangulaires) */
     .cell {
-        width: 60px;
-        height: 60px;
+        width: 75px; /* MODIFIÉ : Largeur rectangulaire */
+        height: 60px; /* Hauteur standard */
         border-radius: 10px;
         /* Carte inactive par URL */
         background: url('https://cdn.gx-games-54rg78cw-aitralt6.com/fg-cdn/prd/root/images/turboMines/mobile/board/boardItemInactive.webp') center/cover no-repeat;
@@ -66,8 +66,8 @@
     
     @media (max-width: 500px) {
         .cell {
-            width: 55px;
-            height: 55px;
+            width: 65px; /* MODIFIÉ : Largeur rectangulaire sur mobile */
+            height: 55px; /* Hauteur standard sur mobile */
         }
     }
 
