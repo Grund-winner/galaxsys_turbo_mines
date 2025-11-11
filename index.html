@@ -25,14 +25,14 @@
         text-align: center;
     }
     .top-logo {
-        width: 300px; /* Taille augmentée x2 */
+        width: 300px; 
         height: auto;
     }
 
-    /* 3. GRILLE DE JEU (MODIFIÉ : Colonnes plus larges) */
+    /* 3. GRILLE DE JEU (MODIFIÉ : Colonnes plus larges pour les cases rectangulaires) */
     .board {
         display: grid;
-        grid-template-columns: repeat(5, 75px); /* MODIFIÉ : 75px pour la largeur de la case */
+        grid-template-columns: repeat(5, 75px); 
         grid-gap: 8px; 
         padding: 0;
         position: relative;
@@ -40,15 +40,16 @@
 
     @media (max-width: 500px) {
         .board {
-            grid-template-columns: repeat(5, 65px); /* MODIFIÉ : 65px pour la largeur sur mobile */
+            grid-template-columns: repeat(5, 65px); 
             grid-gap: 6px;
         }
     }
 
-    /* 4. STYLE DE LA CARTE CACHÉE (FACE ARRIÈRE) (MODIFIÉ : Cellules rectangulaires) */
+    /* 4. STYLE DE LA CARTE CACHÉE (FACE ARRIÈRE) */
     .cell {
-        width: 75px; /* MODIFIÉ : Largeur rectangulaire */
-        height: 60px; /* Hauteur standard */
+        /* MODIFIÉ : Dimensions rectangulaires */
+        width: 75px; 
+        height: 60px; 
         border-radius: 10px;
         /* Carte inactive par URL */
         background: url('https://cdn.gx-games-54rg78cw-aitralt6.com/fg-cdn/prd/root/images/turboMines/mobile/board/boardItemInactive.webp') center/cover no-repeat;
@@ -58,16 +59,18 @@
         align-items: center;
         cursor: pointer;
         
-        /* Configuration de la transition et 3D */
         transform-style: preserve-3d;
         transition: transform 0.5s;
         position: relative;
+        
+        /* NOUVEAU : Bordure lumineuse */
+        box-shadow: 0 0 8px rgba(135, 206, 250, 0.6); /* Lueur bleue subtile */
     }
     
     @media (max-width: 500px) {
         .cell {
-            width: 65px; /* MODIFIÉ : Largeur rectangulaire sur mobile */
-            height: 55px; /* Hauteur standard sur mobile */
+            width: 65px; 
+            height: 55px; 
         }
     }
 
@@ -96,10 +99,11 @@
     .front-face {
         transform: rotateY(180deg); 
         border-radius: 10px;
-        
-        /* Utilisation de l'image de l'étoile fournie */
         background: url('https://i.ibb.co/NgYB9mwV/cadre-toile-removebg-preview.png') center/cover no-repeat;
         background-size: cover; 
+        
+        /* NOUVEAU : Bordure lumineuse plus intense pour la carte "gagnante" */
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); 
     }
     
     .front-face span {
@@ -113,7 +117,7 @@
         transform: rotateY(180deg);
     }
     
-    /* État initial sans rotation (pour reproduire "après.PNG") */
+    /* État initial sans rotation */
     .cell.initial-flipped {
         background: none; 
         transform: none; 
@@ -260,9 +264,9 @@
         // 1. Réinitialiser
         resetBoard(); 
         
-        // 2. Logique pour reproduire l'image "après.PNG" au premier clic
+        // 2. Logique pour reproduire l'image fournie au premier clic
         if (isFirstSignal) {
-            // Index des deux étoiles dorées dans l'image "après.PNG" (Index 1 et 7)
+            // Index des deux étoiles dorées dans l'image (Index 1 et 7)
             const initialIndexes = [1, 7]; 
 
             initialIndexes.forEach((i, idx) => {
@@ -296,3 +300,4 @@
 </body>
 
 </html>
+
