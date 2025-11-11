@@ -92,23 +92,19 @@
     }
 
 
-    /* 5. STYLE DE LA CARTE RETOURNÉE (FACE AVANT : ÉTOILE DORÉE) - FOND JAUNE ET BORDURE ORANGE */
+    /* 5. STYLE DE LA CARTE RETOURNÉE (FACE AVANT : ÉTOILE DORÉE) - MODIFIÉ POUR REMPLISSAGE ET BORDURE JAUNE */
     .front-face {
         transform: rotateY(180deg); 
         border-radius: 10px;
         
-        /* NOUVEAU : Fond jaune/doré */
-        background-color: #FFD700; /* Or (Gold) */
+        /* NOUVELLE IMAGE D'ÉTOILE POUR UN MEILLEUR REMPLISSAGE */
+        background: url('https://i.ibb.co/NgYB9mwV/cadre-toile-removebg-preview.png') center no-repeat;
+        background-size: 90% 90%; /* Ajusté pour bien remplir */
+        background-position: center; /* Centrer l'étoile */
         
-        /* L'étoile comme image de fond sur le fond jaune */
-        background-image: url('https://i.ibb.co/NgYB9mwV/cadre-toile-removebg-preview.png'); 
-        background-repeat: no-repeat;
-        background-position: center; 
-        background-size: 80% 80%; /* Ajuster la taille de l'étoile */
-        
-        /* MODIFIÉ : Bordure orange foncée */
-        border: 2px solid #FFA500; /* Orange */
-        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3), 0 0 8px rgba(255, 215, 0, 0.7); 
+        /* CORRECTION : Bordure JAUNE/DORÉE pour les cases ouvertes */
+        border: 1.5px solid #FFD700; /* Or (Gold) */
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.7); /* Légère lueur jaune pour compléter */
     }
     
     .front-face span {
@@ -272,7 +268,7 @@
         // 2. Logique pour reproduire l'image fournie au premier clic
         if (isFirstSignal) {
             // Index des deux étoiles dorées dans l'image (Index 1 et 7)
-            const initialIndexes = [1, 7, 13, 14, 19]; // Ajout de 3 cases ouvertes pour coller à l'image
+            const initialIndexes = [1, 7]; 
 
             initialIndexes.forEach((i, idx) => {
                  setTimeout(() => {
